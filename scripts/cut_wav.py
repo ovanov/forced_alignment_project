@@ -1,27 +1,43 @@
+#!/usr/bin/env python
+# coding=utf-8
+# Authors: Petra Abramovic, Luka Jovanovic
+## cut wavs in portions of 5 min
+
 from pydub import AudioSegment
 import math
 import sys
 from sys import argv
+import os
 
 
-# Arguments: 0 = filename, 1 = split length (5 per default)
-file = sys.argv[1]
+path_from = sys.argv[1]
+filename = sys.argv[2]
+path_to = sys.argv[3]
+# Arguments: 1 = directory of file to be cut; 2 = filename (to be cut); 3 = directory where the cut file goes; 4 = len_wav(optional)
+
+# file = sys.argv[1]
 if len(sys.argv) == 3:
-    len_wav = sys.argv[2]
+    len_wav = sys.argv[4]
 
-folder = 'C:\\Users\\abram\\OneDrive - uzh.ch\\prog_projekt_HS20\\aeneas\\interviews'
 
-# long_wavs = ['F1.wav', 'F2.wav', 'F3.wav', 'F4.wav', 'F5.wav', 'F6.wav', 'F7.wav',
-#            'F8.wav', 'M1.wav', 'M2.wav', 'M3.wav', 'M4.wav', 'M5.wav', 'M6.wav',
-#            'M7.wav', 'M8.wav', 'M9.wav', 'M10.wav']
+
+filepath = path_from + '\\' + filename
+
+folder = 'C:\\Users\\abram\\OneDrive - uzh.ch\\prog_projekt_HS20\\programmierprojekt_HS20\\cut_wavs_full_length'
+cut_folder = 'C:\\Users\\abram\\OneDrive - uzh.ch\\prog_projekt_HS20\\programmierprojekt_HS20\\wav_5min'
+
+
 
 
 
 class SplitWavAudioMubin():
-    def __init__(self, folder, filename):
-        self.folder = folder
+    def __init__(self, path_from, filename, path_to):
+        self.path_from = path_from
         self.filename = filename
-        self.filepath = folder + '\\' + filename
+        self.path_to = path_to
+        self.filepath = self.path_from + '\\' + self.filename
+
+
 
         self.audio = AudioSegment.from_wav(self.filepath)
 
@@ -32,7 +48,7 @@ class SplitWavAudioMubin():
         t1 = from_min * 60 * 1000
         t2 = to_min * 60 * 1000
         split_audio = self.audio[t1:t2]
-        split_audio.export(self.folder + '\\' + split_filename, format="wav")
+        split_audio.export(self.path_to + '\\' + split_filename, format="wav")
 
     def multiple_split(self, min_per_split=5):
         total_mins = math.ceil(self.get_duration() / 60)
@@ -45,20 +61,12 @@ class SplitWavAudioMubin():
 
 
 
-splitted = SplitWavAudioMubin(folder, file)
-if len(sys.argv) == 3:
+splitted = SplitWavAudioMubin(path_from, filename, path_to)
+if len(sys.argv) == 5:
     splitted.multiple_split(min_per_split=len_wav)
-elif len(sys.argv) == 2:
+elif len(sys.argv) == 4:
     splitted.multiple_split()
 else:
     print("too many arguments.")
 
-# for doc in long_wavs:
-#     file = doc
-#     splitted = SplitWavAudioMubin(folder, file)
-#     if len(sys.argv) == 2:
-#         splitted.multiple_split(min_per_split=len_wav)
-#     elif len(sys.argv) == 1:
-#         splitted.multiple_split()
-#     else:
-#         print("too many arguments.")
+
